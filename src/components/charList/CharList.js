@@ -24,6 +24,12 @@ class CharList extends Component {
         this.onRequest();
     }
 
+    componentDidUpdate (prevProps) {
+        if(this.props.clickLoading !== prevProps.clickLoading) {
+            this.onClickLoading(this.props.clickLoading)  
+        }
+    }
+
     onRequest = (offset) => {
         this.onCharListLoading();
         this.marvelService
@@ -69,7 +75,6 @@ class CharList extends Component {
     }
 
     onFocusElement = (id) => {
-        console.log(this.arrItemList);
         this.arrItemList.forEach(item => {
             item.classList.remove('char__item_selected')
             })
@@ -77,9 +82,23 @@ class CharList extends Component {
         this.arrItemList[id].focus();
     }
 
-   
+    onClickLoading = (click) => {
+        if(click) {
+            this.arrItemList.forEach(item => {
+                item.classList.add('loading')
+                })
+        } else {
+            this.arrItemList.forEach(item => {
+                item.classList.remove('loading')
+                })
+        }
+        
+        
+    }
+
 
     renderItems = (arr) =>  {
+        
         return arr.map((char,i) => {
             return (
             <li ref={this.setItemRef} tabIndex="0" key = {char.id} className="char__item"

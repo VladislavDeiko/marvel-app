@@ -41,11 +41,11 @@ class CharInfo extends Component {
         }
         
         this.onCharLoading();
-
         this.marvelService
             .getCharacter(charId)
             .then(this.onCharLoaded)
             .catch(this.onError)
+        
     }
 
     onCharLoaded = (char) => {
@@ -53,12 +53,14 @@ class CharInfo extends Component {
             char,
             loading: false
             })
+        this.props.onClickLoding(false)
     }
 
     onCharLoading = () => {
         this.setState({
             loading: true
         })
+        this.props.onClickLoding(true)
     }
 
     onError = () => {
