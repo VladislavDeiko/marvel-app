@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React,{ Component } from 'react';
 import './charList.scss';
 import Spiner from '../spinner/Spiner';
 import MarvelService from '../../services/MarvelService';
@@ -62,11 +62,38 @@ class CharList extends Component {
         })
     }
 
+    arrItemList = [];
+
+    setItemRef = elem => {
+        this.arrItemList.push(elem)
+    }
+
+    onFocusElement = (id) => {
+        console.log(this.arrItemList);
+        this.arrItemList.forEach(item => {
+            item.classList.remove('char__item_selected')
+            })
+        this.arrItemList[id].classList.add('char__item_selected');
+        this.arrItemList[id].focus();
+    }
+
+   
+
     renderItems = (arr) =>  {
-        return arr.map(char => {
+        return arr.map((char,i) => {
             return (
-            <li tabIndex="0" key = {char.id} className="char__item"
-            onClick={() => this.props.onCharSelected(char.id)}>
+            <li ref={this.setItemRef} tabIndex="0" key = {char.id} className="char__item"
+            onClick={() => {
+            this.props.onCharSelected(char.id);
+            this.onFocusElement(i);
+            }}
+            onKeyPress = {(e) => {
+                e.preventDefault();
+                if (e.key === ' ' || e.key === "Enter") {
+                    this.props.onCharSelected(char.id);
+                    this.onFocusElement(i);
+                }
+            }}>
                 <img src={char.thumbnail} alt="abyss"/>
                 <div className="char__name">{char.name}</div>
             </li>
