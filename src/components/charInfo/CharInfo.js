@@ -6,6 +6,7 @@ import Skeleton from '../skeleton/Skeleton';
 import PropTypes from 'prop-types';
 
 import './charInfo.scss';
+import { Link } from 'react-router-dom';
 
 const CharInfo = (props) => {
 
@@ -18,13 +19,6 @@ const CharInfo = (props) => {
     useEffect(()=> {
         updateChar();
     }, [props.charId])
-
-    // old version error boundry
-    /* componentDidCatch(err,info) {
-        this.setState({
-            error: true
-        })
-    } */ 
 
     const updateChar = () => {
         
@@ -72,9 +66,10 @@ const View = ({char}) => {
         const listComics = [];
         if (comics.length === 0) {return "No Comics"}
         for (let i = 0; i<10; i++) {
+            const comicId = arr[i].resourceURI.replace('http://gateway.marvel.com/v1/public/comics/', "");
             const item = (
-            <li key = {i} className="char__comics-item">
-                {arr[i].name}
+            <li key = {comicId} className="char__comics-item">
+                <Link to={`/comics/${comicId}`}>{arr[i].name}</Link>
             </li>
             )
             listComics.push(item);
