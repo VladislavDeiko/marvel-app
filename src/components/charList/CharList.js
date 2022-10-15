@@ -1,4 +1,5 @@
 import React,{ useState, useEffect, useRef } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './charList.scss';
 import Spiner from '../spinner/Spiner';
 import useMarvelService from '../../services/MarvelService';
@@ -70,25 +71,32 @@ const CharList = (props) =>  {
 
 
    function  renderItems(arr) {
-        return arr.map((char,i) => {
-            return (
-            <li ref={el => arrItemList.current[i] = el} tabIndex="0" key = {char.id} className="char__item"
-            onClick={() => {
-            props.onCharSelected(char.id);
-            onFocusElement(i);
-            }}
-            onKeyPress = {(e) => {
-                e.preventDefault();
-                if (e.key === ' ' || e.key === "Enter") {
-                    props.onCharSelected(char.id);
-                    onFocusElement(i);
-                }
-            }}>
-                <img src={char.thumbnail} alt="abyss"/>
-                <div className="char__name">{char.name}</div>
-            </li>
-            )
-        })
+
+
+        return (
+            arr.map((char,i) => {    
+                return (
+                <CSSTransition key={char.id} timeout={1000} classNames="char__item">
+                    <li ref={el => arrItemList.current[i] = el} tabIndex="0" key = {char.id} className="char__item"
+                        onClick={() => {
+                        props.onCharSelected(char.id);
+                        onFocusElement(i);
+                        }}
+                        onKeyPress = {(e) => {
+                    e.preventDefault();
+                    if (e.key === ' ' || e.key === "Enter") {
+                        props.onCharSelected(char.id);
+                        onFocusElement(i);
+                    }
+                    }}>
+                    <img src={char.thumbnail} alt="abyss"/>
+                    <div className="char__name">{char.name}</div>
+                    </li>
+                </CSSTransition>
+                
+                )
+            })
+        )
     }
 
         const items = renderItems(chars)
@@ -103,7 +111,9 @@ const CharList = (props) =>  {
                     {errorMessega}
                     {spinner}
                 <ul className="char__grid">
-                    {items}
+                    <TransitionGroup component={null}>
+                        {items}
+                    </TransitionGroup>
                 </ul>
                 <button 
                     className="button button__main button__long"

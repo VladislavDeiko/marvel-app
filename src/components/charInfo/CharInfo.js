@@ -4,9 +4,11 @@ import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
 import PropTypes from 'prop-types';
+import CharSearch from '../charSearch/CharSearch';
 
 import './charInfo.scss';
 import { Link } from 'react-router-dom';
+import ErrorBoundary from '../errorBoundry/ErrorBoundary';
 
 const CharInfo = (props) => {
 
@@ -46,11 +48,17 @@ const CharInfo = (props) => {
 
 
         return (
-            <div className="char__info">
+            <div className="char__info-wrapper">
+                <div className="char__info">
                 {skeleton}
                 {errorMessega}
                 {spinner}
                 {content}
+                </div> 
+
+                <ErrorBoundary>
+                    <CharSearch/> 
+                </ErrorBoundary>    
             </div>
         )
     }

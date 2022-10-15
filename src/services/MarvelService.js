@@ -19,7 +19,7 @@ const useMarvelService = () =>  {
 
     const getCharacter = async (id) =>  {
         const res = await request(`${_apiBase}characters/${id}?${_apiKey}`)
-        return _transformCharacter(res.data.results[0]);
+        return _transformCharacter(res.data.results[0])
     }
 
     const getAllComics = async (offset = 6) => {
@@ -32,9 +32,19 @@ const useMarvelService = () =>  {
         return res.data.results.map(_transformComics)
     }
 
+    const getCharacterByName = async (inputName) =>  {
+        const res = await request(`${_apiBase}characters?name=${inputName}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
+    }
+
 
 
     const _transformCharacter = (char) => {
+         
+        if (!char) {
+            return;
+        }
+        
         const notDescrText = 'Sorry! Desription is empty. Read more on the wiki or site marvel.'
         const sliceText = (text,length) => {
             if (text.length > length) {
@@ -69,7 +79,7 @@ const useMarvelService = () =>  {
         }
     }
 
-    return {loading,error,getAllCharacters,getCharacter,getAllComics,getComic,clearError}
+    return {loading,error,getAllCharacters,getCharacter,getAllComics,getComic,clearError,getCharacterByName}
 }
 
 export default useMarvelService;

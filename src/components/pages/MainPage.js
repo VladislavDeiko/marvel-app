@@ -1,5 +1,6 @@
 import {useState} from "react";
 
+
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
@@ -8,6 +9,7 @@ import ErrorBoundary from '../errorBoundry/ErrorBoundary';
 import decoration from '../../resources/img/vision.png';
 
 const MainPage = () => {
+
 
     const [selectedChar, setChar] = useState(null),
     [clickLoading, setClickLoading] = useState(null);
