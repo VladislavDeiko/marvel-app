@@ -1,11 +1,27 @@
-import React,{ useState, useEffect, useRef } from 'react';
+import React,{ useState, useEffect, useRef, useMemo } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './charList.scss';
 import Spiner from '../spinner/Spiner';
+
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import PropTypes from 'prop-types';
 
+
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting': 
+            return <Spiner/>;
+        case "loading": 
+            return newItemLoading ? <Component/> : <Spiner/>;
+        case "confirmed": 
+            return <Component/>;
+        case "error": 
+            return <ErrorMessage/>;
+        default: 
+            throw new Error ('Unexpected process state')
+    }
+}
 
 
 const CharList = (props) =>  {
@@ -16,7 +32,7 @@ const CharList = (props) =>  {
           [charEnded,setCharEnded] = useState(false);
         
 
-    const {loading,error,getAllCharacters} = useMarvelService();
+    const {getAllCharacters, process, setProcess} = useMarvelService();
 
     useEffect(()=> {
         onRequest(offset, true);
@@ -30,7 +46,8 @@ const CharList = (props) =>  {
     const onRequest = (offset,initial) => {
         initial?setItemLodaing(false):setItemLodaing(true);
         getAllCharacters(offset)
-            .then(onCharsListLoaded);
+            .then(onCharsListLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
 
@@ -47,10 +64,11 @@ const CharList = (props) =>  {
 
     const arrItemList = useRef([]);
 
-    const onFocusElement = (id) => {
+    const onFocusElement = (id) => {  
+    
         arrItemList.current.forEach(item => {
             item.classList.remove('char__item_selected')
-            })
+            });
         arrItemList.current[id].classList.add('char__item_selected');
         arrItemList.current[id].focus();
     }
@@ -64,17 +82,12 @@ const CharList = (props) =>  {
             arrItemList.current.forEach(item => {
                 item.classList.remove('loading')
                 })
-        }
-        
-        
+        }   
     }
 
 
-   function  renderItems(arr) {
-
-
-        return (
-            arr.map((char,i) => {    
+   function  renderItems(arr) {   
+    const items = arr.map((char,i) => {    
                 return (
                 <CSSTransition key={char.id} timeout={1000} classNames="char__item">
                     <li ref={el => arrItemList.current[i] = el} tabIndex="0" key = {char.id} className="char__item"
@@ -83,8 +96,8 @@ const CharList = (props) =>  {
                         onFocusElement(i);
                         }}
                         onKeyPress = {(e) => {
-                    e.preventDefault();
-                    if (e.key === ' ' || e.key === "Enter") {
+                        e.preventDefault();
+                        if (e.key === ' ' || e.key === "Enter") {
                         props.onCharSelected(char.id);
                         onFocusElement(i);
                     }
@@ -93,28 +106,34 @@ const CharList = (props) =>  {
                     <div className="char__name">{char.name}</div>
                     </li>
                 </CSSTransition>
-                
                 )
-            })
-        )
-    }
-
-        const items = renderItems(chars)
-        
-
-        const errorMessega = error ? <ErrorMessage/> : null,
-              spinner = loading && !newItemLoading ? <Spiner/>:null;
-
+            });
 
         return (
-            <div className="char__list">
-                    {errorMessega}
-                    {spinner}
-                <ul className="char__grid">
+            <ul className="char__grid">
                     <TransitionGroup component={null}>
                         {items}
                     </TransitionGroup>
-                </ul>
+            </ul>
+        )
+
+
+    }
+
+/*         const items = renderItems(chars)
+        
+
+        const errorMessage = error ? <ErrorMessage/> : null,
+              spinner = loading && !newItemLoading ? <Spiner/>:null;
+ */
+
+        const elements = useMemo(()=>{
+            return setContent(process, () => renderItems(chars), newItemLoading)
+        },[process])
+
+        return (
+            <div className="char__list">
+                    {elements}
                 <button 
                     className="button button__main button__long"
                     disabled={newItemLoading}

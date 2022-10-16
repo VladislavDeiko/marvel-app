@@ -17,7 +17,7 @@ const MainPage = () => {
 
 
     const onCharSelected = (id) => {
-    setChar(id);
+        setChar(id);
     }
 
     const onClickLoding = (load) => {

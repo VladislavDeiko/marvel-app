@@ -1,10 +1,8 @@
 import { useState,useEffect } from 'react';
-import Spiner from '../spinner/Spiner';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
 import PropTypes from 'prop-types';
 import CharSearch from '../charSearch/CharSearch';
+import setContent from '../../utils/setContent';
 
 import './charInfo.scss';
 import { Link } from 'react-router-dom';
@@ -14,7 +12,7 @@ const CharInfo = (props) => {
 
     const [char,setChar] = useState(null);
 
-    const {loading,error,getCharacter,clearError} = useMarvelService();
+    const {getCharacter,clearError, process,setProcess} = useMarvelService();
 
 
 
@@ -31,6 +29,7 @@ const CharInfo = (props) => {
         clearError();
         getCharacter(charId)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
         
     }
 
@@ -39,23 +38,11 @@ const CharInfo = (props) => {
         props.onClickLoding(false)
     }
 
-
-
-        const skeleton = char || loading || error ? null : <Skeleton/>
-        const errorMessega = error ? <ErrorMessage/> : null,
-              spinner = loading ? <Spiner/>:null,
-              content = !(error || spinner || !char) ? <View char = {char}/> : null;
-
-
         return (
             <div className="char__info-wrapper">
                 <div className="char__info">
-                {skeleton}
-                {errorMessega}
-                {spinner}
-                {content}
-                </div> 
-
+                    {setContent(process,char, View)}
+                </div>
                 <ErrorBoundary>
                     <CharSearch/> 
                 </ErrorBoundary>    
@@ -63,8 +50,8 @@ const CharInfo = (props) => {
         )
     }
 
-const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki,comics} = char;
+const View = ({data}) => {
+    const {name, description, thumbnail, homepage, wiki,comics} = data;
     const thumbnailStyle = {objectFit: 'cover'};
     if (thumbnail.includes("image_not_available.jpg")) {
         thumbnailStyle.objectFit = 'contain';

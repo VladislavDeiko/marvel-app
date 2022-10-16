@@ -4,7 +4,7 @@ import imgNotFound from "../resources/img/not_found.jpg";
 
 const useMarvelService = () =>  {
 
-    const {loading,request,error,clearError} = useHttp();
+    const {loading,request,error,clearError, process,setProcess} = useHttp();
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=92307615a96f3c144c931541a99bd5e9';
@@ -79,7 +79,16 @@ const useMarvelService = () =>  {
         }
     }
 
-    return {loading,error,getAllCharacters,getCharacter,getAllComics,getComic,clearError,getCharacterByName}
+    return {loading,
+            error,
+            process, 
+            setProcess,
+            getAllCharacters,
+            getCharacter,
+            getAllComics,
+            getComic,
+            clearError,
+            getCharacterByName}
 }
 
 export default useMarvelService;
