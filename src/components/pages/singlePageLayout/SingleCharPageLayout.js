@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet';
 import {useNavigate, Link} from 'react-router-dom';
 import './singlePage.scss';
 
@@ -7,7 +8,14 @@ const SingleCharPageLayout = ({data}) => {
     const navigate = useNavigate();
 
     return (
-        <div className="single-comic">
+    <div className="single-comic">
+        <Helmet>
+        <meta
+            name="description"
+            content={`${name} desription page`}
+            />
+            <title>{name}</title>
+        </Helmet>
         <img src={thumbnail} alt={name} className="single-char__img"/>
         <div className="single-comic__info ">
             <h2 className="single-comic__name">{name}</h2>
